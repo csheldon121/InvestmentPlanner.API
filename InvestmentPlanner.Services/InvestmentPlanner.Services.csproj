@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\InvestmentPlanner.Models\InvestmentPlanner.Models.csproj" />
+    <ProjectReference Include="..\InvestmentPlanner.Repository\InvestmentPlanner.Repository.csproj" />
   </ItemGroup>
 
 </Project>

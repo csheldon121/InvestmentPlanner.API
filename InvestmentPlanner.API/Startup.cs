@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using InvestmentPlanner.Services.Interfaces;
+﻿using InvestmentPlanner.Repository;
+using InvestmentPlanner.Repository.Contexts;
+using InvestmentPlanner.Repository.Interfaces;
 using InvestmentPlanner.Services;
+using InvestmentPlanner.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +26,15 @@ namespace InvestmentPlanner.API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddScoped<IPlanService, PlanService>();
+            services.AddScoped<IInvestmentRepository, InvestmentRepository>();
+
+            services.AddDbContext<InvestmentContext>(o => o.UseSqlServer(Configuration.GetConnectionString(InvestmentContext.ConnStr)));
+
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Models.DTOs.InvestmentBasisDTO, Models.Entities.InvestmentBasisEntity>();
+                cfg.CreateMap<Models.DTOs.InvestmentGoalDTO, Models.Entities.InvestmentGoalEntity>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,7 +49,7 @@ namespace InvestmentPlanner.API
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }

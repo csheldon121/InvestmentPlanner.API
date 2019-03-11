@@ -1,5 +1,6 @@
 ﻿using InvestmentPlanner.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace InvestmentPlanner.API.Controllers
 {
@@ -20,21 +21,21 @@ namespace InvestmentPlanner.API.Controllers
         }
 
         [HttpPost("Basic")]
-        public IActionResult Plan(InvestmentBasisDTO investmentBasis)
+        public async Task<IActionResult> Plan(InvestmentBasisDTO investmentBasis)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            return Ok(_planService.CalculateInvestmentPotential(investmentBasis));
+            return Ok(await _planService.CalculateInvestmentPotential(investmentBasis).ConfigureAwait(false));
         }
 
         [HttpPost("Goal")]
-        public IActionResult Goal(InvestmentGoalDTO goal)
+        public async Task<IActionResult> Goal(InvestmentGoalDTO goal)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            return Ok(_planService.CalculateForInvestmentGoal(goal));
+            return Ok(await _planService.CalculateForInvestmentGoal(goal).ConfigureAwait(false));
         }
     }
 }
