@@ -6,7 +6,7 @@ namespace InvestmentPlanner.Services.Interfaces
 {
     public interface IPlanService
     {
-        Task<IEnumerable<InvestmentResultDTO>> CalculateInvestmentPotential(InvestmentBasisDTO basis);
+        Task<InvestmentResultDTO> CalculateInvestmentPotential(InvestmentBasisDTO basis);
         Task<IEnumerable<InvestmentGoalResultDTO>> CalculateForInvestmentGoal(InvestmentGoalDTO goal);
     }
 }

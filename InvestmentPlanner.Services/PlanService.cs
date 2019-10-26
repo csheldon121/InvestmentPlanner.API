@@ -12,42 +12,31 @@ namespace InvestmentPlanner.Services
             _investmentRepository = investmentRepository;
         }
 
-        public async Task<IEnumerable<InvestmentResultDTO>> CalculateInvestmentPotential(InvestmentBasisDTO basis)
+        public async Task<InvestmentResultDTO> CalculateInvestmentPotential(InvestmentBasisDTO basis)
         {
-            var possibleReturns = new List<InvestmentResultDTO>();
+            var result = AutoMapper.Mapper.Map<InvestmentResultDTO>(basis);
 
-            for (int i = 1; i <= 10; i++)
+            for (int i = 1; i <= result.Years; i++)
             {
-                var investment = new InvestmentResultDTO
-                {
-                    Principal = basis.InitialInvestment + (basis.MonthlyContributions * basis.Years * 12),
-                    Total = basis.InitialInvestment,
-                    APR = i
-                };
+                var record = new InvestmentRecordDTO { Year = i, Contribution = basis.AnnualContributions };
 
-                for (int j = 0; j < basis.Years; j++)
-                {
-                    var yearlyTotal = investment.Total + (basis.MonthlyContributions * 12);
-                    var yearlyGrowth = yearlyTotal * (investment.APR / 100);
-                    investment.Growth += yearlyGrowth;
-                    investment.Total = yearlyGrowth + yearlyTotal;
-                }
+                record.Contribution += record.Contribution * (result.AnnualContributionROC / 100) * (i - 1);
+                record.Interest = (result.Total + record.Contribution) * (result.APR / 100);
+                record.Total = result.Total + record.Contribution + record.Interest;
 
-                investment.FinalizedMonthlyGrowthRate = investment.Total * (investment.APR / 100) / 12;
-
-                possibleReturns.Add(investment);
+                result.Records.Add(record);
             }
 
             var basisEntity = AutoMapper.Mapper.Map<Models.Entities.InvestmentBasisEntity>(basis);
             await _investmentRepository.SaveBasisAsync(basisEntity).ConfigureAwait(false);
 
-            return possibleReturns;
+            return result;
         }
 
         public async Task<IEnumerable<InvestmentGoalResultDTO>> CalculateForInvestmentGoal(InvestmentGoalDTO goal)
         {
             var result = new List<InvestmentGoalResultDTO>();
-            
+
             for (int i = 1; i <= 5; i++)
             {
                 for (double j = 1; j <= 10; j++)

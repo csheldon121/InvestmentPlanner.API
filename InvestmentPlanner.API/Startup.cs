@@ -33,6 +33,7 @@ namespace InvestmentPlanner.API
             AutoMapper.Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Models.DTOs.InvestmentBasisDTO, Models.Entities.InvestmentBasisEntity>();
+                cfg.CreateMap<Models.DTOs.InvestmentBasisDTO, Models.DTOs.InvestmentResultDTO>();
                 cfg.CreateMap<Models.DTOs.InvestmentGoalDTO, Models.Entities.InvestmentGoalEntity>();
             });
         }
